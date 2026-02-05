@@ -1,0 +1,22 @@
+# --- Build & Output Directories ---
+build/
+cmake-build-*/
+out/
+bin/
+dist/
+
+# --- IDE & Tooling ---
+.vscode/
+.idea/
+*.sln
+*.vcxproj
+*.vcxproj.user
+CMakeUserPresets.json
+compile_commands.json
+
+# --- Local User Config ---
+*.log
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db

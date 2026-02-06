@@ -14,9 +14,12 @@
 // P2996 Standard Header
 #include <meta> 
 
+#include "NetworkClient.hpp"
+
 namespace meta = std::meta;
 
 namespace reflection_impl {
+    // Helper for expansion statements workaround (P2996R13 Section 2.3)
     template<auto... vals>
     struct replicator_type {
         template<typename F>
@@ -261,5 +264,74 @@ public:
             results.push_back(item);
         }
         return results;
+    }
+
+    /**
+     * @brief Executes a simple query where the SELECT clause is generated automatically via Reflection.
+     * Use this for straightforward "SELECT * WHERE {...}" scenarios.
+     * Moved from main.cpp to keep application logic clean.
+     */
+    template <typename T>
+    static void executeSimpleQueryScenario(std::string_view title, std::string_view whereClause, int limit) {
+        std::println("\n========================================");
+        std::println("TASK: {}", title);
+        std::println("========================================");
+
+        // 1. Build Query automatically
+        std::string query = buildSimpleQuery<T>(whereClause, limit);
+        std::println("[1] Generated SPARQL:\n{}", query);
+
+        // 2. Send & Receive
+        NetworkClient client;
+        std::string url = "https://query.wikidata.org/sparql?query=" + client.urlEncode(query);
+        
+        std::print("[2] Sending request... ");
+        std::string json = client.performGet(url);
+
+        if (json.empty()) {
+            std::println("Failed! (Empty response)");
+            return;
+        }
+        std::println("Done. ({} bytes)", json.size());
+
+        // 3. Parse & Print
+        auto results = parseJsonResponse<T>(json);
+        std::println("[3] Parsed {} items:", results.size());
+        for (const auto& item : results) {
+            printStruct(item);
+        }
+    }
+
+    /**
+     * @brief Executes a raw, manually written SPARQL query but uses Reflection for parsing results.
+     * Use this for COMPLEX scenarios (Aggregations, Grouping, Subqueries).
+     * Moved from main.cpp to keep application logic clean.
+     */
+    template <typename T>
+    static void executeRawQueryScenario(std::string_view title, const std::string& fullQuery) {
+        std::println("\n========================================");
+        std::println("TASK: {}", title);
+        std::println("========================================");
+
+        std::println("[1] Using Manual SPARQL:\n{}", fullQuery);
+
+        NetworkClient client;
+        std::string url = "https://query.wikidata.org/sparql?query=" + client.urlEncode(fullQuery);
+        
+        std::print("[2] Sending request... ");
+        std::string json = client.performGet(url);
+
+        if (json.empty()) {
+            std::println("Failed! (Empty response)");
+            return;
+        }
+        std::println("Done. ({} bytes)", json.size());
+
+        // The Magic: Even though the query was manual, we still parse it automatically!
+        auto results = parseJsonResponse<T>(json);
+        std::println("[3] Parsed {} items:", results.size());
+        for (const auto& item : results) {
+            printStruct(item);
+        }
     }
 };

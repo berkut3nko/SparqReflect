@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
+# Project Definition
 project(SparqReflect
     VERSION 0.1.0
     LANGUAGES CXX
@@ -28,13 +29,17 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # --- Runtime Linker Fix (RPATH) ---
     # Automagically find the custom libc++.so from the toolchain to avoid conflicts
     # with the system's older libc++.
-    get_filename_component(COMPILER_ROOT "${CMAKE_CXX_COMPILER}" DIRECTORY)
-    get_filename_component(COMPILER_ROOT "${COMPILER_ROOT}" DIRECTORY) # Go up from bin/
+    get_filename_component(COMPILER_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY)
+    get_filename_component(COMPILER_ROOT "${COMPILER_BIN_DIR}" DIRECTORY)
 
+    # Search for libc++.so (it might be in lib/ or lib/x86_64-unknown-linux-gnu/)
     find_library(LIBCPP_PATH 
         NAMES "c++" 
-        HINTS "${COMPILER_ROOT}/lib" "${COMPILER_ROOT}/lib64"
+        HINTS "${COMPILER_ROOT}/lib" 
+              "${COMPILER_ROOT}/lib64"
+              "${COMPILER_ROOT}/lib/x86_64-unknown-linux-gnu"
         NO_DEFAULT_PATH
+        NO_CMAKE_FIND_ROOT_PATH
     )
 
     if(LIBCPP_PATH)
@@ -60,6 +65,8 @@ FetchContent_Declare(curl
     URL https://github.com/curl/curl/releases/download/curl-8_5_0/curl-8.5.0.tar.gz
 )
 set(BUILD_CURL_EXE OFF CACHE INTERNAL "")
+# Only build static libs for cURL to simplify linkage
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "") 
 set(CURL_ENABLE_SSL ON CACHE INTERNAL "") 
 FetchContent_MakeAvailable(curl)
 
@@ -67,6 +74,8 @@ FetchContent_MakeAvailable(curl)
 FetchContent_Declare(googletest
     URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
 )
+# Force STATIC build for GTest to avoid RPATH issues with libgtest.so
+set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "" FORCE)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
@@ -95,6 +104,8 @@ include(GoogleTest)
 # Define environment for tests (fallback if RPATH fails)
 if(TOOLCHAIN_LIB_DIR)
     set(TEST_ENV "LD_LIBRARY_PATH=${TOOLCHAIN_LIB_DIR}:$ENV{LD_LIBRARY_PATH}")
+else()
+    set(TEST_ENV "LD_LIBRARY_PATH=$ENV{LD_LIBRARY_PATH}")
 endif()
 
 # DISCOVERY_MODE PRE_TEST is crucial for experimental toolchains to avoid build-time crashes

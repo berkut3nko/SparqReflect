@@ -1,37 +1,56 @@
-#include <iostream>
+#include <print> // New C++23 feature for clean output
 #include "SparqlReflector.hpp"
 #include "NetworkClient.hpp"
 
-// Define a C++ struct that represents the data we want from the Knowledge Graph
-// The member names will automatically become SPARQL variables: ?item ?itemLabel
+// Our Data Model
+// We just define what we want, and C++ Reflection handles the rest.
 struct WikidataItem {
     std::string item;
     std::string itemLabel;
 };
 
 int main() {
-    // 1. Reflect on the struct to build the query
-    std::cout << "--- C++26 Reflection SPARQL Generator ---" << std::endl;
-    
-    // Logic: Find cats (Q146) on Wikidata
-    std::string whereClause = "{ ?item wdt:P31 wd:Q146. ?item rdfs:label ?itemLabel. FILTER(LANG(?itemLabel) = 'en') }";
-    
-    // Generate the full query string using reflection
-    std::string query = SparqlReflector::buildSimpleQuery<WikidataItem>(whereClause, 5);
-    
-    std::cout << "Generated Query: \n" << query << std::endl;
+    std::println("--- C++26 SPARQL Query Demo ---");
 
-    // 2. Execute the query against Wikidata
+    // 1. Define WHAT we are looking for (Logic)
+    // "Find cats (Q146) and their labels in English"
+    std::string logic = R"(
+        { 
+            ?item wdt:P31 wd:Q146. 
+            ?item rdfs:label ?itemLabel. 
+            FILTER(LANG(?itemLabel) = 'en') 
+        }
+    )";
+    
+    // 2. Build the Query automatically
+    // The Reflector looks at 'WikidataItem' struct and generates: "SELECT ?item ?itemLabel ..."
+    std::string query = SparqlReflector::buildSimpleQuery<WikidataItem>(logic, 3);
+    
+    std::println("Generated Query:\n{}", query);
+
+    // 3. Send Request to Wikidata
+    std::println("\n--- Sending Request... ---");
+    
     NetworkClient client;
-    std::string endpoint = "https://query.wikidata.org/sparql";
-    std::string fullUrl = endpoint + "?query=" + client.urlEncode(query);
-    
-    std::cout << "\n--- Executing Request to Wikidata ---" << std::endl;
-    std::string response = client.performGet(fullUrl);
+    std::string url = "https://query.wikidata.org/sparql?query=" + client.urlEncode(query);
+    std::string json = client.performGet(url);
 
-    // Output a snippet of the response
-    std::cout << "Response (First 300 chars): " << std::endl;
-    std::cout << response.substr(0, 300) << "..." << std::endl;
+    if (json.empty()) {
+        std::println(stderr, "Error: No response from Wikidata.");
+        return 1;
+    }
+
+    // 4. Convert JSON response to C++ objects
+    std::println("\n--- Processing Results... ---");
+    auto results = SparqlReflector::parseJsonResponse<WikidataItem>(json);
+
+    std::println("Found {} results:", results.size());
+
+    // 5. Print results using Reflection
+    // We don't need to manually type "item.label", the printer figures it out.
+    for (const auto& item : results) {
+        SparqlReflector::printStruct(item);
+    }
 
     return 0;
 }

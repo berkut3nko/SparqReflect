@@ -17,7 +17,6 @@
 namespace meta = std::meta;
 
 namespace reflection_impl {
-    // Helper for expansion statements workaround (P2996R13 Section 2.3)
     template<auto... vals>
     struct replicator_type {
         template<typename F>

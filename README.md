@@ -1,3 +1,4 @@
+![Standard](https://img.shields.io/badge/Standard-C%2B%2B%2026-blue?logo=c%2B%2B&logoColor=white) ![Reflection](https://img.shields.io/badge/Reflection-P2996-orange) ![Compiler](https://img.shields.io/badge/Compiler-Clang%20(Experimental)-red?logo=llvm&logoColor=white) ![Build](https://img.shields.io/badge/Build-CMake-008FBA?logo=cmake&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 # SparqReflect: AI Knowledge Mapping with C++26
 
 **SparqReflect** is a research project demonstrating the use of upcoming C++26 Static Reflection (P2996) features to efficiently parse and map Semantic Web data (RDF/SPARQL) from public endpoints like Wikidata.
@@ -73,11 +74,18 @@ ctest --output-on-failure
 
 ## 📝 Project Structure
 
-src/main.cpp: Main entry point. Contains the P2996 reflection logic and cURL workflow.
-
-tests/test_main.cpp: GoogleTest unit tests.
-
-CMakeLists.txt: Dependency management (cURL, GTest) and build configuration.
+```text
+SparqReflect/
+├── CMakeLists.txt          # Build configuration (CMake)
+├── Doxyfile                # Doxygen documentation config
+├── README.md               # Project documentation
+├── src/
+│   ├── main.cpp            # Entry point (Usage example)
+│   ├── NetworkClient.hpp   # HTTP Client wrapper (libcurl)
+│   └── SparqlReflector.hpp # Core Reflection & Parsing logic (P2996)
+└── tests/
+    └── test_main.cpp       # Unit tests (GoogleTest)
+```
 
 ## ⚠️ Disclaimer
 

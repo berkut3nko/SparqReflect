@@ -1,0 +1,86 @@
+\chapter{Sparq\+Reflect\+: AI Knowledge Mapping with C++26}
+\hypertarget{index}{}\label{index}\index{SparqReflect: AI Knowledge Mapping with C++26@{SparqReflect: AI Knowledge Mapping with C++26}}
+\label{index_md_README}%
+\Hypertarget{index_md_README}%
+ {\bfseries{Sparq\+Reflect}} is a research project demonstrating the use of upcoming C++26 Static Reflection (P2996) features to efficiently parse and map Semantic Web data (RDF/\+SPARQL) from public endpoints like Wikidata.
+
+The project leverages libcurl for network requests and maps semantic graph data directly to C++ structs using zero-\/overhead compile-\/time reflection.\hypertarget{index_autotoc_md1}{}\doxysection{\texorpdfstring{🚀 Features}{🚀 Features}}\label{index_autotoc_md1}
+{\bfseries{Modern C++26\+:}} Utilizes the experimental P2996 proposal for Static Reflection.
+
+{\bfseries{Semantic Web\+:}} Interacts with Wikidata SPARQL endpoints.
+
+{\bfseries{Networking\+:}} Embedded libcurl via CMake Fetch\+Content.
+
+{\bfseries{Testing\+:}} Unit testing with Google\+Test.\hypertarget{index_autotoc_md2}{}\doxysection{\texorpdfstring{🛠️ Prerequisites}{🛠️ Prerequisites}}\label{index_autotoc_md2}
+To compile the Reflection features, you cannot use a standard install of GCC or Clang (as of early 2026). You must use a compiler fork that implements P2996.\hypertarget{index_autotoc_md3}{}\doxysubsection{\texorpdfstring{Recommended Compiler}{Recommended Compiler}}\label{index_autotoc_md3}
+{\bfseries{Clang P2996 Fork\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Bloomberg\ Clang-\/p2996}
+
+\end{DoxyCode}
+
+
+{\bfseries{Compiler Explorer\+:}} You can test the code logic online at godbolt.\+org by selecting the x86-\/64 clang (p2996) compiler.\hypertarget{index_autotoc_md4}{}\doxysubsection{\texorpdfstring{Dependencies}{Dependencies}}\label{index_autotoc_md4}
+
+\begin{DoxyItemize}
+\item CMake 3.\+25+
+\item Open\+SSL (recommended for HTTPS support in c\+URL)
+\end{DoxyItemize}
+
+{\bfseries{Linux\+:}} {\ttfamily sudo apt-\/get install libssl-\/dev}
+
+{\bfseries{mac\+OS\+:}} {\ttfamily brew install openssl}\hypertarget{index_autotoc_md5}{}\doxysection{\texorpdfstring{🏗️ Build Instructions}{🏗️ Build Instructions}}\label{index_autotoc_md5}
+
+\begin{DoxyEnumerate}
+\item Clone the repository\+:
+\end{DoxyEnumerate}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{git\ clone\ [https://github.com/your-\/username/SparqReflect.git](https://github.com/your-\/username/SparqReflect.git)}
+\DoxyCodeLine{cd\ SparqReflect}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyEnumerate}
+\item Configure CMake\+: {\ttfamily Note\+: You must point CMake to your specific P2996 compiler.}
+\end{DoxyEnumerate}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{mkdir\ build}
+\DoxyCodeLine{cd\ build}
+\DoxyCodeLine{cmake\ -\/DCMAKE\_CXX\_COMPILER=/path/to/clang-\/p2996/bin/clang++\ ..}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyEnumerate}
+\item Build\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{cmake\ -\/-\/build\ .}
+
+\end{DoxyCode}
+
+\item Run\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{./SparqReflect}
+
+\end{DoxyCode}
+
+\item Run Tests\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ctest\ -\/-\/output-\/on-\/failure}
+
+\end{DoxyCode}
+
+\end{DoxyEnumerate}\hypertarget{index_autotoc_md6}{}\doxysection{\texorpdfstring{📝 Project Structure}{📝 Project Structure}}\label{index_autotoc_md6}
+\doxylink{main_8cpp}{src/main.\+cpp}\+: Main entry point. Contains the P2996 reflection logic and c\+URL workflow.
+
+tests/test\+\_\+main.\+cpp\+: Google\+Test unit tests.
+
+CMake\+Lists.\+txt\+: Dependency management (c\+URL, GTest) and build configuration.\hypertarget{index_autotoc_md7}{}\doxysection{\texorpdfstring{⚠️ Disclaimer}{⚠️ Disclaimer}}\label{index_autotoc_md7}
+This project uses experimental C++ features that are not yet part of the official ISO standard. Syntax and behavior are subject to change. 

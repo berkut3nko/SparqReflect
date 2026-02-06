@@ -1,0 +1,231 @@
+\doxysection{SPARQReflector.\+hpp}
+\hypertarget{SPARQReflector_8hpp_source}{}\label{SPARQReflector_8hpp_source}\index{src/SPARQReflector.hpp@{src/SPARQReflector.hpp}}
+\mbox{\hyperlink{SPARQReflector_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <format>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string\_view>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <algorithm>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <type\_traits>}\ \textcolor{comment}{//\ Required\ for\ std::is\_integral\_v,\ etc.}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <print>}\ \ \ \ \ \ \ \textcolor{comment}{//\ C++23:\ Modern\ printing}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{comment}{//\ P2996\ Standard\ Header}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ <meta>}\ }
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{namespace\ }meta\ =\ std::meta;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacereflection__impl}{reflection\_impl}}\ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{auto}...\ vals>}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structreflection__impl_1_1replicator__type}{replicator\_type}}\ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ F>}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structreflection__impl_1_1replicator__type_af7e3b26d5de5961f05663870da7f4cf4}{operator>>}}(F\ body)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ (body.template\ operator()<vals>(),\ ...);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{auto}...\ vals>}
+\DoxyCodeLine{00029\ \ \ \ \ \mbox{\hyperlink{structreflection__impl_1_1replicator__type}{replicator\_type}}<vals...>\ \mbox{\hyperlink{namespacereflection__impl_af16562dee4b431e7073588394c931471}{replicator}}\ =\ \{\};}
+\DoxyCodeLine{00030\ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00036\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classMiniSparqlParser}{MiniSparqlParser}}\ \{}
+\DoxyCodeLine{00037\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{static}\ std::vector<std::string>\ \mbox{\hyperlink{classMiniSparqlParser_ab625a85e900e5def58cefb250a06b9a6}{extractBindings}}(std::string\_view\ json)\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ std::vector<std::string>\ bindings;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Find\ "{}results"{}}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ resultsPos\ =\ json.find(\textcolor{stringliteral}{"{}\(\backslash\)"{}results\(\backslash\)"{}"{}});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (resultsPos\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ bindings;}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ Find\ "{}bindings"{}\ inside\ results}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bindingsPos\ =\ json.find(\textcolor{stringliteral}{"{}\(\backslash\)"{}bindings\(\backslash\)"{}"{}},\ resultsPos);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (bindingsPos\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ bindings;}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 3.\ Find\ the\ start\ of\ the\ array\ '['}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ arrayStart\ =\ json.find(\textcolor{charliteral}{'['},\ bindingsPos);}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (arrayStart\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ bindings;}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 4.\ Iterate\ through\ array\ elements\ (objects\ enclosed\ in\ \{\ \})}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ currentPos\ =\ arrayStart\ +\ 1;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ braceCount\ =\ 0;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ itemStart\ =\ std::string\_view::npos;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (currentPos\ <\ json.length())\ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}\ c\ =\ json[currentPos];}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (c\ ==\ \textcolor{charliteral}{'\{'})\ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (braceCount\ ==\ 0)\ itemStart\ =\ currentPos;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ braceCount++;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (c\ ==\ \textcolor{charliteral}{'\}'})\ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ braceCount-\/-\/;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (braceCount\ ==\ 0\ \&\&\ itemStart\ !=\ std::string\_view::npos)\ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Found\ a\ complete\ object\ \{\ ...\ \}}}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ bindings.emplace\_back(json.substr(itemStart,\ currentPos\ -\/\ itemStart\ +\ 1));}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ itemStart\ =\ std::string\_view::npos;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (c\ ==\ \textcolor{charliteral}{']'}\ \&\&\ braceCount\ ==\ 0)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};\ \textcolor{comment}{//\ End\ of\ bindings\ array}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ currentPos++;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ bindings;}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{static}\ std::string\ \mbox{\hyperlink{classMiniSparqlParser_ae8b42880b5afb16b3df6ecd254171063}{extractValue}}(std::string\_view\ rowJson,\ std::string\_view\ varName)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Construct\ search\ key\ like\ "{}varName"{}}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ std::string\ key\ =\ \textcolor{stringliteral}{"{}\(\backslash\)"{}"{}}\ +\ std::string(varName)\ +\ \textcolor{stringliteral}{"{}\(\backslash\)"{}"{}};}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ keyPos\ =\ rowJson.find(key);}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (keyPos\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ opening\ brace\ of\ this\ variable's\ object\ '\{'}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Skip\ whitespace\ after\ key}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ objStart\ =\ rowJson.find(\textcolor{charliteral}{'\{'},\ keyPos);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (objStart\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Inside\ this\ object,\ find\ "{}value"{}\ key}}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ valueLabelPos\ =\ rowJson.find(\textcolor{stringliteral}{"{}\(\backslash\)"{}value\(\backslash\)"{}"{}},\ objStart);}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (valueLabelPos\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ colon\ after\ "{}value"{}}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ colonPos\ =\ rowJson.find(\textcolor{charliteral}{':'},\ valueLabelPos);}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (colonPos\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ opening\ quote\ of\ the\ actual\ value,\ skipping\ whitespace/newlines}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ valueStartQuote\ =\ std::string\_view::npos;}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ i\ =\ colonPos\ +\ 1;\ i\ <\ rowJson.length();\ ++i)\ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (rowJson[i]\ ==\ \textcolor{charliteral}{'"{}'})\ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ valueStartQuote\ =\ i;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (valueStartQuote\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ the\ closing\ quote\ (handling\ escaped\ quotes\ is\ skipped\ for\ simplicity)}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ valueEndQuote\ =\ rowJson.find(\textcolor{charliteral}{'"{}'},\ valueStartQuote\ +\ 1);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (valueEndQuote\ ==\ std::string\_view::npos)\ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(rowJson.substr(valueStartQuote\ +\ 1,\ valueEndQuote\ -\/\ valueStartQuote\ -\/\ 1));}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \};}
+\DoxyCodeLine{00128\ }
+\DoxyCodeLine{00132\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classSparqlReflector}{SparqlReflector}}\ \{}
+\DoxyCodeLine{00133\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00134\ \ \ \ \ \textcolor{comment}{//\ Helper\ function\ to\ expand\ a\ range\ into\ a\ splice-\/able\ replicator.}}
+\DoxyCodeLine{00135\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ R>}
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{consteval}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}{expand}}(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{R}}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{range}})\ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ std::vector<std::meta::info>\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{args}};}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{r}}\ :\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{range}})\ \{}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{args}}.push\_back(std::meta::reflect\_constant(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{r}}));}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ meta::substitute(\string^\string^\mbox{\hyperlink{namespacereflection__impl_af16562dee4b431e7073588394c931471}{reflection\_impl::replicator}},\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{args}});}
+\DoxyCodeLine{00142\ \ \ \ \ \}}
+\DoxyCodeLine{00143\ }
+\DoxyCodeLine{00149\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00150\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classSparqlReflector_aa9bdebd807b7e40222ad54d9dc4d1bb1}{printStruct}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}}\&\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{obj}})\ \{}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}}\ =\ \string^\string^\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}};}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ std::print(\textcolor{stringliteral}{"{}\ \ [\ "{}});}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{is\_first}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Iterate\ over\ all\ members\ of\ the\ struct}}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ [:\mbox{\hyperlink{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}{expand}}(meta::members\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}},\ meta::access\_context::unchecked())):]\ >>\ [\&]<\textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}>\{}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (meta::is\_nonstatic\_data\_member(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}))\ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{is\_first}})\ std::print(\textcolor{stringliteral}{"{}\ |\ "{}});}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Print\ "{}MemberName:\ Value"{}}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::print(\textcolor{stringliteral}{"{}\{\}:\ \{\}"{}},\ meta::identifier\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}),\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{obj}}.[:\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}:]);}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{is\_first}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ std::println(\textcolor{stringliteral}{"{}\ ]"{}});}
+\DoxyCodeLine{00169\ \ \ \ \ \}}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00176\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00177\ \ \ \ \ \textcolor{keyword}{static}\ std::string\ \mbox{\hyperlink{classSparqlReflector_a47017800afe3ee2c46e5c93292817490}{generateSelectClause}}()\ \{}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ std::stringstream\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ss}};}
+\DoxyCodeLine{00179\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ss}}\ <<\ \textcolor{stringliteral}{"{}SELECT"{}};}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ReflectedType}}\ =\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}};}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}}\ =\ \string^\string^\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ReflectedType}};}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ P2996R10+:\ members\_of\ requires\ an\ access\_context\ argument.}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ [:\mbox{\hyperlink{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}{expand}}(meta::members\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}},\ meta::access\_context::unchecked())):]\ >>\ [\&]<\textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}>\{}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (meta::is\_nonstatic\_data\_member(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}))\ \{}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{name}}\ =\ meta::identifier\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}});}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ss}}\ <<\ \textcolor{stringliteral}{"{}\ ?"{}}\ <<\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{name}};}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00191\ }
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ss}}.str();}
+\DoxyCodeLine{00193\ \ \ \ \ \}}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00199\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00200\ \ \ \ \ \textcolor{keyword}{static}\ std::string\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{buildSimpleQuery}}(std::string\_view\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{whereClause}},\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{limit}}\ =\ 10)\ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{select}}\ =\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{generateSelectClause<T>}}();}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::format(\textcolor{stringliteral}{"{}\{\}\ WHERE\ \{\}\ LIMIT\ \{\}"{}},\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{select}},\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{whereClause}},\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{limit}});}
+\DoxyCodeLine{00203\ \ \ \ \ \}}
+\DoxyCodeLine{00204\ }
+\DoxyCodeLine{00211\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keyword}{static}\ std::vector<T>\ \mbox{\hyperlink{classSparqlReflector_a9bbf9a18abe628b9f678e508826719c7}{parseJsonResponse}}(\textcolor{keyword}{const}\ std::string\&\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rawJson}})\ \{}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ std::vector<T>\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{results}};}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Extract\ raw\ JSON\ strings\ for\ each\ row}}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rows}}\ =\ \mbox{\hyperlink{classMiniSparqlParser_ab625a85e900e5def58cefb250a06b9a6}{MiniSparqlParser::extractBindings}}(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rawJson}});}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ Iterate\ over\ rows\ and\ map\ to\ C++\ struct\ using\ Reflection}}
+\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\&\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rowJson}}\ :\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rows}})\ \{}
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}}\ item\{\};\ \textcolor{comment}{//\ Value\ initialization\ (important\ for\ ints\ to\ be\ 0)}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ReflectedType}}\ =\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}};}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}}\ =\ \string^\string^\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{ReflectedType}};}
+\DoxyCodeLine{00223\ }
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reflection\ Loop:\ Iterate\ over\ struct\ members}}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ [:\mbox{\hyperlink{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}{expand}}(meta::members\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{type\_meta}},\ meta::access\_context::unchecked())):]\ >>\ [\&]<\textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}>\{}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (meta::is\_nonstatic\_data\_member(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}))\ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ compile-\/time\ name\ of\ the\ member\ (e.g.,\ "{}itemLabel"{})}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{nameView}}\ =\ meta::identifier\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}});}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extract\ value\ from\ JSON\ using\ our\ mini-\/parser}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{value}}\ =\ \mbox{\hyperlink{classMiniSparqlParser_ae8b42880b5afb16b3df6ecd254171063}{MiniSparqlParser::extractValue}}(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{rowJson}},\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{nameView}});}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{value}}.empty())\ \{}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ the\ type\ of\ the\ member\ to\ perform\ correct\ conversion}}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{MemberType}}\ =\ \textcolor{keyword}{typename}\ [:\ meta::type\_of(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}})\ :];}
+\DoxyCodeLine{00236\ }
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Assign\ based\ on\ type}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_same\_v<MemberType,\ std::string>)\ \{}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ item.[:\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}:]\ =\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{value}};}
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_integral\_v<MemberType>)\ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ string\ to\ integer\ type\ (int,\ long,\ size\_t,\ etc.)}}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ item.[:\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}:]\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{MemberType}}\textcolor{keyword}{>}(std::stoll(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{value}}));}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (...)\ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ignore\ conversion\ errors\ in\ this\ simple\ parser}}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (std::is\_floating\_point\_v<MemberType>)\ \{}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Convert\ string\ to\ floating\ point\ (float,\ double)}}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ item.[:\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{member}}:]\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{MemberType}}\textcolor{keyword}{>}(std::stod(\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{value}}));}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{catch}\ (...)\ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ignore\ errors}}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{results}}.push\_back(item);}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{results}};}
+\DoxyCodeLine{00264\ \ \ \ \ \}}
+\DoxyCodeLine{00265\ \};}
+
+\end{DoxyCode}

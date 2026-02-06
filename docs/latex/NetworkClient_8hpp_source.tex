@@ -1,0 +1,84 @@
+\doxysection{Network\+Client.\+hpp}
+\hypertarget{NetworkClient_8hpp_source}{}\label{NetworkClient_8hpp_source}\index{src/NetworkClient.hpp@{src/NetworkClient.hpp}}
+\mbox{\hyperlink{NetworkClient_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <curl/curl.h>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <functional>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <print>}\ \textcolor{comment}{//\ C++23\ for\ cleaner\ output}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classNetworkClient}{NetworkClient}}\ \{}
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{classNetworkClient_ac3e6334ffae912c14087fb58072c03d1}{NetworkClient}}()\ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ curl\_global\_init(CURL\_GLOBAL\_DEFAULT);}
+\DoxyCodeLine{00022\ \ \ \ \ \}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{classNetworkClient_ab82fb597494c89b4a7ba9fd0d4b659c4}{\string~NetworkClient}}()\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ curl\_global\_cleanup();}
+\DoxyCodeLine{00026\ \ \ \ \ \}}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classNetworkClient_ae3fbae1db7dad3e55c3b51da5cc164dd}{WriteCallback}}(\textcolor{keywordtype}{void}*\ contents,\ \textcolor{keywordtype}{size\_t}\ size,\ \textcolor{keywordtype}{size\_t}\ nmemb,\ \textcolor{keywordtype}{void}*\ userp)\ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ totalSize\ =\ size\ *\ nmemb;}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}*\ strBuffer\ =\ \textcolor{keyword}{static\_cast<}std::string*\textcolor{keyword}{>}(userp);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ strBuffer-\/>append(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{char}*\textcolor{keyword}{>}(contents),\ totalSize);}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ totalSize;}
+\DoxyCodeLine{00041\ \ \ \ \ \}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00048\ \ \ \ \ [[nodiscard]]\ }
+\DoxyCodeLine{00049\ \ \ \ \ std::string\ \mbox{\hyperlink{classNetworkClient_a3852ccfed081baaec76e134dea8a3767}{performGet}}(\textcolor{keyword}{const}\ std::string\&\ url)\ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ CURL*\ curl\ =\ curl\_easy\_init();}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ std::string\ readBuffer;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!curl)\ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ std::println(stderr,\ \textcolor{stringliteral}{"{}Error:\ Failed\ to\ initialize\ CURL."{}});}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ curl\_easy\_setopt(curl,\ CURLOPT\_URL,\ url.c\_str());}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ User-\/Agent\ to\ avoid\ being\ blocked\ by\ Wikidata/DBpedia}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ curl\_easy\_setopt(curl,\ CURLOPT\_USERAGENT,\ \textcolor{stringliteral}{"{}SparqReflect/0.1.0"{}});}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Setup\ write\ callback}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ curl\_easy\_setopt(curl,\ CURLOPT\_WRITEFUNCTION,\ \mbox{\hyperlink{classNetworkClient_ae3fbae1db7dad3e55c3b51da5cc164dd}{WriteCallback}});}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ curl\_easy\_setopt(curl,\ CURLOPT\_WRITEDATA,\ \&readBuffer);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Accept\ JSON}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }curl\_slist*\ headers\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ headers\ =\ curl\_slist\_append(headers,\ \textcolor{stringliteral}{"{}Accept:\ application/sparql-\/results+json"{}});}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ curl\_easy\_setopt(curl,\ CURLOPT\_HTTPHEADER,\ headers);}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Perform\ request}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ CURLcode\ res\ =\ curl\_easy\_perform(curl);}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (res\ !=\ CURLE\_OK)\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ std::println(stderr,\ \textcolor{stringliteral}{"{}curl\_easy\_perform()\ failed:\ \{\}"{}},\ curl\_easy\_strerror(res));}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ curl\_slist\_free\_all(headers);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ curl\_easy\_cleanup(curl);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ readBuffer;}
+\DoxyCodeLine{00083\ \ \ \ \ \}}
+\DoxyCodeLine{00084\ \ \ \ \ }
+\DoxyCodeLine{00090\ \ \ \ \ [[nodiscard]]}
+\DoxyCodeLine{00091\ \ \ \ \ std::string\ \mbox{\hyperlink{classNetworkClient_a00ce84916dad5792fc2bd30dbb067e73}{urlEncode}}(\textcolor{keyword}{const}\ std::string\&\ value)\ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ CURL*\ curl\ =\ curl\_easy\_init();}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (curl)\ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{char}*\ output\ =\ curl\_easy\_escape(curl,\ value.c\_str(),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}\textcolor{keyword}{>}(value.length()));}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (output)\ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ result(output);}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curl\_free(output);}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ curl\_easy\_cleanup(curl);}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ result;}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ curl\_easy\_cleanup(curl);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00104\ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \};}
+
+\end{DoxyCode}

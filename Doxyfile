@@ -1,0 +1,111 @@
+Doxyfile 1.10.0
+
+#---------------------------------------------------------------------------
+
+Project related configuration options
+
+#---------------------------------------------------------------------------
+
+DOXYFILE_ENCODING      = UTF-8
+
+Project Metadata
+
+PROJECT_NAME           = "SparqReflect"
+PROJECT_NUMBER         = "0.1.0"
+PROJECT_BRIEF          = "A C++26 Reflection-based SPARQL client and parser implementing P2996 features."
+PROJECT_LOGO           =
+
+Output Directory
+
+OUTPUT_DIRECTORY       = docs
+
+Navigation & Structure
+
+CREATE_SUBDIRS         = NO
+ALLOW_UNICODE_NAMES    = NO
+OUTPUT_LANGUAGE        = English
+
+#---------------------------------------------------------------------------
+
+Build related configuration options
+
+#---------------------------------------------------------------------------
+
+Extract everything (even without comments) so you can see all files
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+
+Scan recursively
+
+RECURSIVE              = YES
+
+Main Page Configuration [CHANGED]
+
+We include the README.md in the input and set it as the landing page.
+
+INPUT                  = src README.md
+USE_MDFILE_AS_MAINPAGE = README.md
+
+File Patterns
+
+FILE_PATTERNS          = *.c *.cc *.cxx *.cpp *.c++ *.h *.hh *.hpp *.h++ *.md
+
+#---------------------------------------------------------------------------
+
+HTML Output options
+
+#---------------------------------------------------------------------------
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .html
+HTML_COLORSTYLE        = AUTO_LIGHT
+
+Tree View (Sidebar)
+
+GENERATE_TREEVIEW      = YES
+TREEVIEW_WIDTH         = 300
+FULL_SIDEBAR           = NO
+
+Search Engine
+
+SEARCHENGINE           = YES
+
+Formatting
+
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+Diagrams (Graphviz)
+
+HAVE_DOT               = YES
+CLASS_GRAPH            = YES
+COLLABORATION_GRAPH    = YES
+UML_LOOK               = YES
+TEMPLATE_RELATIONS     = YES
+INCLUDE_GRAPH          = YES
+INCLUDED_BY_GRAPH      = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+DOT_IMAGE_FORMAT       = png
+INTERACTIVE_SVG        = YES
+
+#---------------------------------------------------------------------------
+
+Preprocessor (Crucial for C++26 reflection parsing mostly)
+
+#---------------------------------------------------------------------------
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = YES
+EXPAND_ONLY_PREDEF     = NO
+SKIP_FUNCTION_MACROS   = YES
+
+Warnings
+
+QUIET                  = NO
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO

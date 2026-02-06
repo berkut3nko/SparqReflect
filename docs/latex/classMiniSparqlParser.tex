@@ -1,0 +1,77 @@
+\doxysection{Mini\+Sparql\+Parser Class Reference}
+\hypertarget{classMiniSparqlParser}{}\label{classMiniSparqlParser}\index{MiniSparqlParser@{MiniSparqlParser}}
+
+
+Simple helper class to parse SPARQL JSON responses without external libraries.  
+
+
+
+
+{\ttfamily \#include $<$SPARQReflector.\+hpp$>$}
+
+
+
+Collaboration diagram for Mini\+Sparql\+Parser\+:
+% FIG 0
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static std\+::vector$<$ std\+::string $>$ \mbox{\hyperlink{classMiniSparqlParser_ab625a85e900e5def58cefb250a06b9a6}{extract\+Bindings}} (std\+::string\+\_\+view json)
+\begin{DoxyCompactList}\small\item\em Extract individual binding objects (rows) from the full JSON response. \end{DoxyCompactList}\item 
+static std\+::string \mbox{\hyperlink{classMiniSparqlParser_ae8b42880b5afb16b3df6ecd254171063}{extract\+Value}} (std\+::string\+\_\+view row\+Json, std\+::string\+\_\+view var\+Name)
+\begin{DoxyCompactList}\small\item\em Extracts the "{}value"{} of a specific variable from a binding JSON string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Simple helper class to parse SPARQL JSON responses without external libraries. 
+
+Designed specifically for the structure\+: \{ "{}results"{}\+: \{ "{}bindings"{}\+: \mbox{[} ... \mbox{]} \} \} 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classMiniSparqlParser_ab625a85e900e5def58cefb250a06b9a6}\label{classMiniSparqlParser_ab625a85e900e5def58cefb250a06b9a6} 
+\index{MiniSparqlParser@{MiniSparqlParser}!extractBindings@{extractBindings}}
+\index{extractBindings@{extractBindings}!MiniSparqlParser@{MiniSparqlParser}}
+\doxysubsubsection{\texorpdfstring{extractBindings()}{extractBindings()}}
+{\footnotesize\ttfamily static std\+::vector$<$ std\+::string $>$ Mini\+Sparql\+Parser\+::extract\+Bindings (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{json }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Extract individual binding objects (rows) from the full JSON response. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em json} & Full JSON string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$std\+::string$>$ List of JSON substrings, each representing one row item. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 1
+\Hypertarget{classMiniSparqlParser_ae8b42880b5afb16b3df6ecd254171063}\label{classMiniSparqlParser_ae8b42880b5afb16b3df6ecd254171063} 
+\index{MiniSparqlParser@{MiniSparqlParser}!extractValue@{extractValue}}
+\index{extractValue@{extractValue}!MiniSparqlParser@{MiniSparqlParser}}
+\doxysubsubsection{\texorpdfstring{extractValue()}{extractValue()}}
+{\footnotesize\ttfamily static std\+::string Mini\+Sparql\+Parser\+::extract\+Value (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{row\+Json,  }\item[{std\+::string\+\_\+view}]{var\+Name }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Extracts the "{}value"{} of a specific variable from a binding JSON string. 
+
+Looks for\+: "{}var\+Name"{}\+: \{ ... "{}value"{}\+: "{}\+TARGET\+\_\+\+VALUE"{} ... \} Robust to whitespace. 
+\begin{DoxyParams}{Parameters}
+{\em row\+Json} & The JSON string for a single row. \\
+\hline
+{\em var\+Name} & The variable name to search for (e.\+g., "{}item\+Label"{}). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::string The extracted value or empty string if not found. 
+\end{DoxyReturn}
+Here is the caller graph for this function\+:
+% FIG 2
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{SPARQReflector_8hpp}{SPARQReflector.\+hpp}}\end{DoxyCompactItemize}

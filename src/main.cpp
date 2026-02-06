@@ -1,5 +1,5 @@
 #include <print> // New C++23 feature for clean output
-#include "SparqlReflector.hpp"
+#include "SPARQReflector.hpp"
 #include "NetworkClient.hpp"
 
 // Our Data Model

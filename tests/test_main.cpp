@@ -3,7 +3,7 @@
 #include <vector>
 
 // Include the header directly as CMake handles include directories
-#include "SparqlReflector.hpp"
+#include "SPARQReflector.hpp"
 
 // =============================================================================
 // Test Data Structures

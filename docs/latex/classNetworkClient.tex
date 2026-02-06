@@ -1,0 +1,143 @@
+\doxysection{Network\+Client Class Reference}
+\hypertarget{classNetworkClient}{}\label{classNetworkClient}\index{NetworkClient@{NetworkClient}}
+
+
+Simple HTTP client wrapper around libcurl.  
+
+
+
+
+{\ttfamily \#include $<$Network\+Client.\+hpp$>$}
+
+
+
+Collaboration diagram for Network\+Client\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classNetworkClient_ac3e6334ffae912c14087fb58072c03d1}{Network\+Client}} ()
+\begin{DoxyCompactList}\small\item\em Initialize global CURL environment. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classNetworkClient_ab82fb597494c89b4a7ba9fd0d4b659c4}{\texorpdfstring{$\sim$}{\string~}\+Network\+Client}} ()
+\item 
+std\+::string \mbox{\hyperlink{classNetworkClient_a3852ccfed081baaec76e134dea8a3767}{perform\+Get}} (const std\+::string \&url)
+\begin{DoxyCompactList}\small\item\em Executes a GET request to the specified URL. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{classNetworkClient_a00ce84916dad5792fc2bd30dbb067e73}{url\+Encode}} (const std\+::string \&value)
+\begin{DoxyCompactList}\small\item\em Helper to URL-\/encode a query string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static size\+\_\+t \mbox{\hyperlink{classNetworkClient_ae3fbae1db7dad3e55c3b51da5cc164dd}{Write\+Callback}} (void \texorpdfstring{$\ast$}{*}contents, size\+\_\+t size, size\+\_\+t nmemb, void \texorpdfstring{$\ast$}{*}userp)
+\begin{DoxyCompactList}\small\item\em Callback function for c\+URL to write received data into a string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Simple HTTP client wrapper around libcurl. 
+
+Designed to fetch JSON data from SPARQL endpoints. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{classNetworkClient_ac3e6334ffae912c14087fb58072c03d1}\label{classNetworkClient_ac3e6334ffae912c14087fb58072c03d1} 
+\index{NetworkClient@{NetworkClient}!NetworkClient@{NetworkClient}}
+\index{NetworkClient@{NetworkClient}!NetworkClient@{NetworkClient}}
+\doxysubsubsection{\texorpdfstring{NetworkClient()}{NetworkClient()}}
+{\footnotesize\ttfamily Network\+Client\+::\+Network\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize global CURL environment. 
+
+\begin{DoxyWarning}{Warning}
+Not thread-\/safe if multiple clients are created concurrently without external global init. 
+\end{DoxyWarning}
+\Hypertarget{classNetworkClient_ab82fb597494c89b4a7ba9fd0d4b659c4}\label{classNetworkClient_ab82fb597494c89b4a7ba9fd0d4b659c4} 
+\index{NetworkClient@{NetworkClient}!````~NetworkClient@{\texorpdfstring{$\sim$}{\string~}NetworkClient}}
+\index{````~NetworkClient@{\texorpdfstring{$\sim$}{\string~}NetworkClient}!NetworkClient@{NetworkClient}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}NetworkClient()}{\string~NetworkClient()}}
+{\footnotesize\ttfamily Network\+Client\+::\texorpdfstring{$\sim$}{\string~}\+Network\+Client (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classNetworkClient_a3852ccfed081baaec76e134dea8a3767}\label{classNetworkClient_a3852ccfed081baaec76e134dea8a3767} 
+\index{NetworkClient@{NetworkClient}!performGet@{performGet}}
+\index{performGet@{performGet}!NetworkClient@{NetworkClient}}
+\doxysubsubsection{\texorpdfstring{performGet()}{performGet()}}
+{\footnotesize\ttfamily std\+::string Network\+Client\+::perform\+Get (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{url }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Executes a GET request to the specified URL. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em url} & The target SPARQL endpoint URL (already encoded with query). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::string The raw response body. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{classNetworkClient_a00ce84916dad5792fc2bd30dbb067e73}\label{classNetworkClient_a00ce84916dad5792fc2bd30dbb067e73} 
+\index{NetworkClient@{NetworkClient}!urlEncode@{urlEncode}}
+\index{urlEncode@{urlEncode}!NetworkClient@{NetworkClient}}
+\doxysubsubsection{\texorpdfstring{urlEncode()}{urlEncode()}}
+{\footnotesize\ttfamily std\+::string Network\+Client\+::url\+Encode (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Helper to URL-\/encode a query string. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em value} & The raw SPARQL query string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::string URL-\/encoded string. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{classNetworkClient_ae3fbae1db7dad3e55c3b51da5cc164dd}\label{classNetworkClient_ae3fbae1db7dad3e55c3b51da5cc164dd} 
+\index{NetworkClient@{NetworkClient}!WriteCallback@{WriteCallback}}
+\index{WriteCallback@{WriteCallback}!NetworkClient@{NetworkClient}}
+\doxysubsubsection{\texorpdfstring{WriteCallback()}{WriteCallback()}}
+{\footnotesize\ttfamily static size\+\_\+t Network\+Client\+::\+Write\+Callback (\begin{DoxyParamCaption}\item[{void \texorpdfstring{$\ast$}{*}}]{contents,  }\item[{size\+\_\+t}]{size,  }\item[{size\+\_\+t}]{nmemb,  }\item[{void \texorpdfstring{$\ast$}{*}}]{userp }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Callback function for c\+URL to write received data into a string. 
+
+
+\begin{DoxyItemize}
+\item 
+\begin{DoxyParams}{Parameters}
+{\em contents} & Pointer to the data received. \\
+\hline
+{\em size} & Size of one element. \\
+\hline
+{\em nmemb} & Number of elements. \\
+\hline
+{\em userp} & User pointer (destination std\+::string). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+size\+\_\+t Total bytes handled. 
+\end{DoxyReturn}
+
+\end{DoxyItemize}Here is the caller graph for this function\+:
+% FIG 4
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{NetworkClient_8hpp}{Network\+Client.\+hpp}}\end{DoxyCompactItemize}

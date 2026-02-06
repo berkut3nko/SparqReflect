@@ -1,0 +1,142 @@
+\doxysection{Sparql\+Reflector Class Reference}
+\hypertarget{classSparqlReflector}{}\label{classSparqlReflector}\index{SparqlReflector@{SparqlReflector}}
+
+
+A utility class to generate SPARQL query parts and parse results using C++26 Static Reflection.  
+
+
+
+
+{\ttfamily \#include $<$SPARQReflector.\+hpp$>$}
+
+
+
+Collaboration diagram for Sparql\+Reflector\+:
+% FIG 0
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{R}} $>$ }\\\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{consteval}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{auto}} \mbox{\hyperlink{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}{expand}} (\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{R}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{range}})
+\item 
+{\footnotesize template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ }\\\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{void}} \mbox{\hyperlink{classSparqlReflector_aa9bdebd807b7e40222ad54d9dc4d1bb1}{print\+Struct}} (\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{const}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} \&\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{obj}})
+\begin{DoxyCompactList}\small\item\em Automatically prints any C++ struct to the console using Reflection. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ }\\\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} std\+::string \mbox{\hyperlink{classSparqlReflector_a47017800afe3ee2c46e5c93292817490}{generate\+Select\+Clause}} ()
+\begin{DoxyCompactList}\small\item\em Generates a SPARQL SELECT clause string from a struct type. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\static std\+::string \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{build\+Simple\+Query}} (std\+::string\+\_\+view where\+Clause, int limit=10)
+\begin{DoxyCompactList}\small\item\em Construct a simple query wrapper. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ }\\\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} std\+::vector$<$ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ \mbox{\hyperlink{classSparqlReflector_a9bbf9a18abe628b9f678e508826719c7}{parse\+Json\+Response}} (\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{const}} std\+::string \&\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{raw\+Json}})
+\begin{DoxyCompactList}\small\item\em Parses a SPARQL JSON response into a vector of struct T using Reflection and a custom mini-\/parser. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A utility class to generate SPARQL query parts and parse results using C++26 Static Reflection. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}\label{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a} 
+\index{SparqlReflector@{SparqlReflector}!buildSimpleQuery@{buildSimpleQuery}}
+\index{buildSimpleQuery@{buildSimpleQuery}!SparqlReflector@{SparqlReflector}}
+\doxysubsubsection{\texorpdfstring{buildSimpleQuery()}{buildSimpleQuery()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static std\+::string Sparql\+Reflector\+::build\+Simple\+Query (\begin{DoxyParamCaption}\item[{std\+::string\+\_\+view}]{where\+Clause,  }\item[{int}]{limit = {\ttfamily 10} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Construct a simple query wrapper. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The struct defining the expected result columns. \\
+\hline
+\end{DoxyTemplParams}
+Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d}\label{classSparqlReflector_a655c8a45a2ab9e76195bdbe7a8760b6d} 
+\index{SparqlReflector@{SparqlReflector}!expand@{expand}}
+\index{expand@{expand}!SparqlReflector@{SparqlReflector}}
+\doxysubsubsection{\texorpdfstring{expand()}{expand()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{R}} $>$ \\
+\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{consteval}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{auto}} Sparql\+Reflector\+::expand (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{R}}}]{range }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+Here is the call graph for this function\+:
+% FIG 3
+Here is the caller graph for this function\+:
+% FIG 4
+\Hypertarget{classSparqlReflector_a47017800afe3ee2c46e5c93292817490}\label{classSparqlReflector_a47017800afe3ee2c46e5c93292817490} 
+\index{SparqlReflector@{SparqlReflector}!generateSelectClause@{generateSelectClause}}
+\index{generateSelectClause@{generateSelectClause}!SparqlReflector@{SparqlReflector}}
+\doxysubsubsection{\texorpdfstring{generateSelectClause()}{generateSelectClause()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ \\
+\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} std\+::string Sparql\+Reflector\+::generate\+Select\+Clause (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Generates a SPARQL SELECT clause string from a struct type. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The struct type to reflect upon. \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyReturn}{Returns}
+std\+::string A string formatted as "{}\+SELECT ?member1 ?member2 ..."{} 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 5
+\Hypertarget{classSparqlReflector_a9bbf9a18abe628b9f678e508826719c7}\label{classSparqlReflector_a9bbf9a18abe628b9f678e508826719c7} 
+\index{SparqlReflector@{SparqlReflector}!parseJsonResponse@{parseJsonResponse}}
+\index{parseJsonResponse@{parseJsonResponse}!SparqlReflector@{SparqlReflector}}
+\doxysubsubsection{\texorpdfstring{parseJsonResponse()}{parseJsonResponse()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ \\
+\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} std\+::vector$<$ \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ Sparql\+Reflector\+::parse\+Json\+Response (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{const}} std\+::string \&}]{raw\+Json }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Parses a SPARQL JSON response into a vector of struct T using Reflection and a custom mini-\/parser. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The target struct type to populate. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em raw\+Json} & The raw JSON string returned by the SPARQL endpoint. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+std\+::vector$<$\+T$>$ A list of populated objects. 
+\end{DoxyReturn}
+Here is the call graph for this function\+:
+% FIG 6
+\Hypertarget{classSparqlReflector_aa9bdebd807b7e40222ad54d9dc4d1bb1}\label{classSparqlReflector_aa9bdebd807b7e40222ad54d9dc4d1bb1} 
+\index{SparqlReflector@{SparqlReflector}!printStruct@{printStruct}}
+\index{printStruct@{printStruct}!SparqlReflector@{SparqlReflector}}
+\doxysubsubsection{\texorpdfstring{printStruct()}{printStruct()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{typename}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} $>$ \\
+\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{static}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{void}} Sparql\+Reflector\+::print\+Struct (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{const}} \mbox{\hyperlink{classSparqlReflector_a96c547cde8f4b672bdc5372b4100303a}{T}} \&}]{obj }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Automatically prints any C++ struct to the console using Reflection. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Any struct with members. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em obj} & The object to print. \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function\+:
+% FIG 7
+Here is the caller graph for this function\+:
+% FIG 8
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{SPARQReflector_8hpp}{SPARQReflector.\+hpp}}\end{DoxyCompactItemize}

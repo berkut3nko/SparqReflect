@@ -52,12 +52,13 @@ int main() {
     SparqlReflector::executeSimpleQueryScenario<ProgrammingLanguage>("Basic Query 1: Programming Languages", where1, 5);
 
     // Scenario 2: Space Telescopes
+    // Fixed: Added OPTIONAL for launch date to ensure results even if data is missing.
     std::string where2 = R"(
         {
             ?telescope wdt:P31 wd:Q35221.
-            ?telescope wdt:P619 ?launchDate.
             ?telescope rdfs:label ?telescopeLabel.
             FILTER(LANG(?telescopeLabel) = 'en')
+            OPTIONAL { ?telescope wdt:P619 ?launchDate. }
         }
     )";
     SparqlReflector::executeSimpleQueryScenario<SpaceTelescope>("Basic Query 2: Space Telescopes", where2, 5);
@@ -77,6 +78,7 @@ int main() {
     // TASK 4: Advanced Query (Grouping & Ranking)
     // ---------------------------------------------------------
     
+    // Using manual SPARQL string because of GROUP BY / ORDER BY complexity
     std::string query4 = R"(
         SELECT ?countryLabel (COUNT(?astronaut) as ?count)
         WHERE {

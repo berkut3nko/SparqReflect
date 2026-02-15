@@ -82,7 +82,7 @@ SparqReflect/
 ├── src/
 │   ├── main.cpp            # Entry point (Usage example)
 │   ├── NetworkClient.hpp   # HTTP Client wrapper (libcurl)
-│   └── SparqlReflector.hpp # Core Reflection & Parsing logic (P2996)
+│   └── SPARQReflector.hpp # Core Reflection & parsing logic (P2996)
 └── tests/
     └── test_main.cpp       # Unit tests (GoogleTest)
 ```
